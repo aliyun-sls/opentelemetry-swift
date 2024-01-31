@@ -54,7 +54,7 @@ let package = Package(
                 path: "Sources/Instrumentation/SDKResourceExtension",
                 exclude: ["README.md"]),
         .target(name: "URLSessionInstrumentation",
-                dependencies: ["OpenTelemetrySdk", "NetworkStatus"],
+                dependencies: ["OpenTelemetrySdk"],
                 path: "Sources/Instrumentation/URLSession",
                 exclude: ["README.md"]),
         .target(name: "NetworkStatus",

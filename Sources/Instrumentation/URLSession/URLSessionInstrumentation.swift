@@ -584,9 +584,9 @@ public class URLSessionInstrumentation {
 
             if InstrumentationUtils.usesUndocumentedAsyncAwaitMethods {
                 if #available(OSX 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *) {
-                    guard Task.basePriority != nil else {
-                        return
-                    }
+//                    guard Task.basePriority != nil else {
+//                        return
+//                    }
                     let instrumentedRequest = URLSessionLogger.processAndLogRequest(request, sessionTaskId: taskId, instrumentation: self, shouldInjectHeaders: true)
                     task.setValue(instrumentedRequest, forKey: "currentRequest")
                     self.setIdKey(value: taskId, for: task)
