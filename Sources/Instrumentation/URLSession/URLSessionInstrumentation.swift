@@ -598,16 +598,19 @@ public class URLSessionInstrumentation {
             }
 
             if #available(OSX 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *) {
-//                guard Task.basePriority != nil else {
-//                    return
-//                }
-                let instrumentedRequest = URLSessionLogger.processAndLogRequest(request, sessionTaskId: taskId, instrumentation: self, shouldInjectHeaders: true)
-                task.setValue(instrumentedRequest, forKey: "currentRequest")
-                self.setIdKey(value: taskId, for: task)
+                withUnsafeCurrentTask { current in
+                    guard let _ = current else {
+                        return
+                    }
+                    
+                    let instrumentedRequest = URLSessionLogger.processAndLogRequest(request, sessionTaskId: taskId, instrumentation: self, shouldInjectHeaders: true)
+                    task.setValue(instrumentedRequest, forKey: "currentRequest")
+                    self.setIdKey(value: taskId, for: task)
 
-                // If not inside a Task basePriority is nil
-                if task.delegate == nil {
-                    task.delegate = FakeDelegate()
+                    // If not inside a Task basePriority is nil
+                    if task.delegate == nil {
+                        task.delegate = FakeDelegate()
+                    }
                 }
             }
         }
