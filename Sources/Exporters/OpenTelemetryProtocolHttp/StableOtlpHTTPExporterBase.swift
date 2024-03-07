@@ -7,15 +7,16 @@ import Foundation
 import SwiftProtobuf
 import OpenTelemetryProtocolExporterCommon
 
-public class OtlpHttpExporterBase {
+public class StableOtlpHTTPExporterBase {
   let endpoint: URL
   let httpClient: HTTPClient
-  let envVarHeaders : [(String,String)]?
+  let envVarHeaders: [(String, String)]?
+  let config: OtlpConfiguration
   
-  let config : OtlpConfiguration
-  public init(endpoint: URL, config: OtlpConfiguration = OtlpConfiguration(), useSession: URLSession? = nil, envVarHeaders: [(String,String)]? = EnvVarHeaders.attributes) {
+  // MARK: - Init
+  
+  public init(endpoint: URL, config: OtlpConfiguration = OtlpConfiguration(), useSession: URLSession? = nil, envVarHeaders: [(String, String)]? = EnvVarHeaders.attributes) {
     self.envVarHeaders = envVarHeaders
-    
     self.endpoint = endpoint
     self.config = config
     if let providedSession = useSession {
@@ -27,6 +28,10 @@ public class OtlpHttpExporterBase {
   
   public func createRequest(body: Message, endpoint: URL) -> URLRequest {
     var request = URLRequest(url: endpoint)
+    
+    for header in config.headers ?? [] {
+      request.addValue(header.1, forHTTPHeaderField: header.0)
+    }
     
     do {
       request.httpMethod = "POST"
@@ -40,7 +45,5 @@ public class OtlpHttpExporterBase {
     return request
   }
   
-  public func shutdown(explicitTimeout: TimeInterval? = nil) {
-    
-  }
+  public func shutdown(explicitTimeout: TimeInterval? = nil) { }
 }
