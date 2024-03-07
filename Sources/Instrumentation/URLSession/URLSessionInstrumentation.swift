@@ -338,13 +338,10 @@ public class URLSessionInstrumentation {
             methodsToSwizzle.append(method)
         }
 
-        if NSClassFromString("AFURLSessionManager") != nil {
-            let classes = InstrumentationUtils.objc_getClassList()
-            classes.forEach {
-                if let method = class_getInstanceMethod($0, NSSelectorFromString("af_resume")) {
-                    methodsToSwizzle.append(method)
-                }
-            }
+        if NSClassFromString("AFURLSessionManager") != nil,
+           let clazz = NSClassFromString("_AFURLSessionTaskSwizzling"),
+           let method = class_getInstanceMethod(clazz, NSSelectorFromString("af_resume")){
+            methodsToSwizzle.append(method)
         }
 
         methodsToSwizzle.forEach {
